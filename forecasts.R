@@ -27,6 +27,12 @@ summary(df_D$count)
 library(xts)
 df_D_ts <- xts(df_D, order.by = as.Date(as.yearmon(df_D$year)))
 
+# Set up training and test sets
+# df_D_ts[,"count"]
+y <- df_D_ts["2022-01-01","count"]
+X <- window(df_D_ts,
+            end = "2021-01-01")
+X <- X[,"count"]
 
 # create a df with all years
 # get the name and bind with year
