@@ -19,23 +19,14 @@ all_data <- map_dfr(dir('./data'), function(x){
 df_D <- all_data %>%
     filter(name == "Delilah")
 
-# convert year to variable type year
-df_D$year <- as.Date(as.yearmon(df_D$year))
-# df_D$year <- as.Date(as.character(df_D$year), format = "%Y")
-
-# get summary
+# get summary statistics
 summary(df_D)
 summary(df_D$count)
 
 ##### convert to time_series
-# select only necessary variables
-# df_D_ts_vars <- df_D %>%
-#     select(count, year)
-
-
 library(xts)
-xts(df_D, order.by = df_D$year)
-# xts(df_D_ts_vars, order.by = year(df_D_ts_vars$year))
+df_D_ts <- xts(df_D, order.by = as.Date(as.yearmon(df_D$year)))
+
 
 # create a df with all years
 # get the name and bind with year
