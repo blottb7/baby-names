@@ -19,13 +19,34 @@ all_data <- map_dfr(dir('./data'), function(x){
 df_D <- all_data %>%
     filter(name == "Delilah")
 
+# convert year to variable type year
+# as.Date(ISOdate(df_D$year, month = 1, day = 1))
+# as.Date(paste(df_D$year, 1, 1, sep = "-"))
+# 
+# library(zoo)
+# as.Date(as.yearmon(df_D$year))
+
+df_D$year <- year(as.Date(as.character(df_D$year), format = "%Y"))
+
+
+# get summary
+summary(df_D$count)
+
+##### convert to time_series
+# select only necessary variables
+df_D_ts_vars <- df_D %>%
+    select(count, year)
+
+
+
+# xts(df_D_ts_vars, order.by = year(df_D_ts_vars$year))
+
 # create a df with all years
 # get the name and bind with year
 # check for missing values
 # impute missing values
 
-# get summary
-summary(df_D$count)
+
 
 # get just year and count vars
 df_D_ts <- df_D %>%
