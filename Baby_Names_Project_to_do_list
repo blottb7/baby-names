@@ -1,0 +1,18 @@
+Baby Names Project
+
+# Iteration 1:
+Improve ts model for a single name
+
+
+# Iteration 2:
+-reproducible zip download
+	-will need to create "data" folder in project with code
+	-will need to extract zipped files into that folder
+
+Data
+- remove data from github
+- add data folder to ignore
+
+Iteration 3
+Ignore file (this is covered in part 2 of Raps With R)
+- What are the files in there?
