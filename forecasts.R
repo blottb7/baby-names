@@ -54,8 +54,6 @@ plot.ts(mymodel$residuals)
 myforecast <- forecast(mymodel, h=10)
 plot(myforecast)
 
-# Now that baseline model is established, will work on a more predictive model.
-
 ##### Forecast a few names
 
 ##### Forecast all names
