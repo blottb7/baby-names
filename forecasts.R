@@ -3,7 +3,7 @@ library(tidyverse)
 library(gganimate)
 library(scales)
 library(forecast)
-library(xts)
+# library(xts)
 
 ### Data
 # Data Comes from https://www.ssa.gov/oact/babynames/names.zip
@@ -29,7 +29,11 @@ summary(df_D)
 summary(df_D$count)
 
 # convert to time_series
-df_D_ts <- xts(df_D, order.by = as.Date(as.yearmon(df_D$year)))
+ts(df_D,start=c(1880))
+df_D_ts <- ts(df_D,start=c(1880))
+plot.ts(ts(df_D,start=c(1880)))
+# df_D_ts <- xts(df_D, order.by = as.Date(as.yearmon(df_D$year)), start=c(1880))
+# df_D_ts <- xts(df_D, order.by = as.Date(as.yearmon(df_D$year)))
 
 ### Set up training and test sets
 # Baseline model
