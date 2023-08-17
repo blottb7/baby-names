@@ -1,12 +1,14 @@
+### Libraries
 library(tidyverse)
 library(gganimate)
 library(scales)
 library(forecast)
 library(xts)
 
+### Data
 # Data Comes from https://www.ssa.gov/oact/babynames/names.zip
 
-##Read In Data Files
+# Read In Data Files
 all_data <- map_dfr(dir('./data'), function(x){
     read_csv(paste0('./data/', x), 
              col_names = c('name', 'gender', 'count'),
@@ -14,7 +16,9 @@ all_data <- map_dfr(dir('./data'), function(x){
         mutate(year = x %>% str_extract('\\d+') %>% as.integer)
 })
 
-##### Forecast one name
+##### Forecast
+
+### ...a single name:
 
 # get one name
 df_D <- all_data %>%
@@ -24,19 +28,27 @@ df_D <- all_data %>%
 summary(df_D)
 summary(df_D$count)
 
-##### convert to time_series
+# convert to time_series
 df_D_ts <- xts(df_D, order.by = as.Date(as.yearmon(df_D$year)))
 
-# Set up training and test sets
-# df_D_ts[,"count"]
+### Set up training and test sets
 # Baseline model
+
+# select count column and last year for y-variable
 y <- df_D_ts["2022-01-01","count"]
+
+# select all but last year for X-set
 X <- window(df_D_ts,
             end = "2021-01-01")
+# select only count column
 X <- X[,"count"]
 
-# predict
-naive(X, h = 12)
+### predict
+
+# visualize
+plot.ts(X)
+
+# naive(X, h = 12)
 
 # 10 year model
 
