@@ -24,19 +24,37 @@ all_data <- map_dfr(dir('./data'), function(x){
 df_D <- all_data %>%
     filter(name == "Delilah")
 
+# select just the count column
+df_D <- df_D |>
+    select(count)
+
 # get summary statistics
 summary(df_D)
 summary(df_D$count)
 
 # convert to time_series
-ts(df_D,start=c(1880))
+ts(df_D, start=c(1880))
+# ts(df_D['count'],start=c(1880))
 df_D_ts <- ts(df_D,start=c(1880))
+
+# Check the plot
 plot.ts(ts(df_D,start=c(1880)))
+plot.ts(df_D_ts)
+# just count var
+# plot.ts(ts(df_D['count'],start=c(1880)))
+
 # df_D_ts <- xts(df_D, order.by = as.Date(as.yearmon(df_D$year)), start=c(1880))
 # df_D_ts <- xts(df_D, order.by = as.Date(as.yearmon(df_D$year)))
 
 ### Set up training and test sets
 # Baseline model
+
+HoltWinters(df_D_ts, beta = FALSE, gamma = FALSE)
+D_HW_forecasts <- HoltWinters(df_D_ts, beta = FALSE, gamma = FALSE)
+D_HW_forecasts$fitted
+
+# plot ts vs forecasts
+plot(D_HW_forecasts)
 
 # select count column and last year for y-variable
 y <- df_D_ts["2022-01-01","count"]
