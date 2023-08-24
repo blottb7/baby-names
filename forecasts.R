@@ -56,6 +56,10 @@ D_HW_forecasts$fitted
 # plot ts vs forecasts
 plot(D_HW_forecasts)
 
+# Run Holt Winters
+forecast:::forecast.HoltWinters(D_HW_forecasts, h=10)
+# forecasts.HoltWinters(D_HW_forecasts, h=10)
+
 # select count column and last year for y-variable
 y <- df_D_ts["2022-01-01","count"]
 
