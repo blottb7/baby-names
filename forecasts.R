@@ -67,10 +67,17 @@ round(future_forecasts$mean,0)
 plot(future_forecasts$mean)
 plot(future_forecasts)
 
-# convert forecasts to non-time series
-# as.data.frame(t(matrix(future_forecasts$mean, 12)))
-as.data.frame(matrix(future_forecasts$mean, 12))
+# convert forecasts to dataframe
+tt <- ts(rnorm(12*5, 17, 8), start=c(1981,1), frequency = 12)
+dmn <- list(month.abb, unique(floor(time(tt))))
+as.data.frame(t(matrix(tt, 12, dimnames = dmn)))
+# str(as.data.frame(t(matrix(tt, 12, dimnames = dmn))))
 
+# seq
+seq(2023, 2032, 1)
+obj <- round(future_forecasts$mean, 0)
+df_fore <- as.data.frame(matrix(obj, dimnames = list(seq(2023, 2032, 1), "count")))
+df_fore <- rownames_to_column(df_fore, "year")
 
 ##### Forecast a few names
 
