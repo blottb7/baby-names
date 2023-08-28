@@ -42,8 +42,11 @@ plot.ts(df_D_ts)
 ### Set up training and test sets
 # Baseline model
 
-HoltWinters(df_D_ts, beta = FALSE, gamma = FALSE)
-D_HW_forecasts <- HoltWinters(df_D_ts, beta = FALSE, gamma = FALSE)
+# Find the right parameters for HoltWinter (no seasonal, but a trend)
+D_HW_forecasts <- HoltWinters(df_D_ts, beta = TRUE, gamma = FALSE)
+
+HoltWinters(df_D_ts, beta = TRUE, gamma = FALSE)
+# D_HW_forecasts <- HoltWinters(df_D_ts, beta = FALSE, gamma = FALSE)
 D_HW_forecasts$fitted
 
 # plot ts vs forecasts
@@ -51,9 +54,6 @@ plot(D_HW_forecasts)
 
 # Run Holt Winters
 forecast:::forecast.HoltWinters(D_HW_forecasts, h=10)
-
-# Find the right parameters for HoltWinter (no seasonal, but a trend)
-D_HW_forecasts <- HoltWinters(df_D_ts, beta = TRUE, gamma = FALSE)
 
 # select count column and last year for y-variable
 y <- df_D_ts["2022-01-01","count"]
