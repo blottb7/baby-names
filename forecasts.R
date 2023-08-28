@@ -57,11 +57,18 @@ forecast:::forecast.HoltWinters(D_HW_forecasts, h=10)
 # 100
 forecast:::forecast.HoltWinters(D_HW_forecasts, h=100)
 
+# Append n years of forecasts for the new name onto the main df
+future_forecasts <- forecast:::forecast.HoltWinters(D_HW_forecasts, h=10)
+round(future_forecasts[[4]],0)
+
+
+##### Forecast a few names
+
 # create a df with all years
+ts(0, start = 1880, end = 2022, frequency = 1)
+
 # get the name and bind with year
 # check for missing values
 # impute missing values
-
-##### Forecast a few names
 
 ##### Forecast all names
