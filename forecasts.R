@@ -22,6 +22,8 @@ all_data <- map_dfr(dir('./data'), function(x){
 # get one name: "Delilah"
 df_D <- all_data %>%
     filter(name == "Delilah")
+# reserve that data
+df_D_copy <- df_D
 
 # select just the count column
 df_D <- df_D |>
@@ -59,7 +61,15 @@ forecast:::forecast.HoltWinters(D_HW_forecasts, h=100)
 
 # Append n years of forecasts for the new name onto the main df
 future_forecasts <- forecast:::forecast.HoltWinters(D_HW_forecasts, h=10)
-round(future_forecasts[[4]],0)
+round(future_forecasts$mean,0)
+
+# plot future forecasts
+plot(future_forecasts$mean)
+plot(future_forecasts)
+
+# convert forecasts to non-time series
+# as.data.frame(t(matrix(future_forecasts$mean, 12)))
+as.data.frame(matrix(future_forecasts$mean, 12))
 
 
 ##### Forecast a few names
