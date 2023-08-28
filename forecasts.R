@@ -53,10 +53,7 @@ plot(D_HW_forecasts)
 forecast:::forecast.HoltWinters(D_HW_forecasts, h=10)
 
 # Find the right parameters for HoltWinter (no seasonal, but a trend)
-# HoltWinters(df_D_ts, beta = FALSE, gamma = FALSE)
 D_HW_forecasts <- HoltWinters(df_D_ts, beta = TRUE, gamma = FALSE)
-# HoltWinters(df_D_ts, beta = FALSE, gamma = TRUE)
-# HoltWinters(df_D_ts, beta = TRUE, gamma = TRUE)
 
 # select count column and last year for y-variable
 y <- df_D_ts["2022-01-01","count"]
