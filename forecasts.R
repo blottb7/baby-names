@@ -1,11 +1,13 @@
+### Libraries
 library(tidyverse)
 library(gganimate)
 library(scales)
 library(forecast)
 
+### Data
 # Data Comes from https://www.ssa.gov/oact/babynames/names.zip
 
-##Read In Data Files
+# Read In Data Files
 all_data <- map_dfr(dir('./data'), function(x){
     read_csv(paste0('./data/', x), 
              col_names = c('name', 'gender', 'count'),
@@ -13,48 +15,52 @@ all_data <- map_dfr(dir('./data'), function(x){
         mutate(year = x %>% str_extract('\\d+') %>% as.integer)
 })
 
-##### Forecast one name
+##### Forecast
 
-# get one name
+### ...a single name:
+
+# get one name: "Delilah"
 df_D <- all_data %>%
     filter(name == "Delilah")
+
+# select just the count column
+df_D <- df_D |>
+    select(count)
+
+# get summary statistics
+summary(df_D)
+# summary(df_D$count)
+
+# convert to time_series
+df_D_ts <- ts(df_D,start=c(1880))
+
+# Check the plot
+plot.ts(df_D_ts)
+
+# Forecast HoltWinter model (no seasonal, but a trend)
+HoltWinters(df_D_ts, beta = TRUE, gamma = FALSE)
+D_HW_forecasts <- HoltWinters(df_D_ts, beta = TRUE, gamma = FALSE)
+
+# check values
+D_HW_forecasts$fitted
+
+# plot ts vs forecasts
+plot(D_HW_forecasts)
+
+# Run Holt Winters for years beyond data set
+# 1
+forecast:::forecast.HoltWinters(D_HW_forecasts, h=1)
+
+# 10
+forecast:::forecast.HoltWinters(D_HW_forecasts, h=10)
+
+# 100
+forecast:::forecast.HoltWinters(D_HW_forecasts, h=100)
 
 # create a df with all years
 # get the name and bind with year
 # check for missing values
 # impute missing values
-
-# get summary
-summary(df_D$count)
-
-# get just year and count vars
-df_D_ts <- df_D %>%
-    select(year, count)
-
-# data visual
-plot(df_D_ts)
-# plot trend line
-abline(reg = lm(df_D_ts$count ~ df_D_ts$year))
-
-# convert to time series
-df_D_ts <- ts(df_D_ts)
-
-# ts_D_ts <- ts(df_D_ts$count)
-
-# decompose data
-# ddf <- decompose(df_D_ts, "multiplicative")  # there is no seasonality, so this doesn't apply here
-
-# create arima model
-mymodel <- auto.arima(df_D_ts[,1])
-
-# plot the residuals
-plot.ts(mymodel$residuals)
-
-# forecast for the next ten years
-myforecast <- forecast(mymodel, h=10)
-plot(myforecast)
-
-# Now that baseline model is established, will work on a more predictive model.
 
 ##### Forecast a few names
 
