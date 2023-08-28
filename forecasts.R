@@ -67,17 +67,31 @@ round(future_forecasts$mean,0)
 plot(future_forecasts$mean)
 plot(future_forecasts)
 
-# convert forecasts to dataframe
-tt <- ts(rnorm(12*5, 17, 8), start=c(1981,1), frequency = 12)
-dmn <- list(month.abb, unique(floor(time(tt))))
-as.data.frame(t(matrix(tt, 12, dimnames = dmn)))
-# str(as.data.frame(t(matrix(tt, 12, dimnames = dmn))))
+### convert forecasts to dataframe
 
-# seq
-seq(2023, 2032, 1)
-obj <- round(future_forecasts$mean, 0)
-df_fore <- as.data.frame(matrix(obj, dimnames = list(seq(2023, 2032, 1), "count")))
+# save mean forecasts in an object
+future_forecasts_mean <- round(future_forecasts$mean, 0)
+
+# convert to dataframe with row names as years
+df_fore <- as.data.frame(matrix(future_forecasts_mean, dimnames = list(seq(2023, 2032, 1), "count")))
+
+# convert row to names to column
 df_fore <- rownames_to_column(df_fore, "year")
+
+# convert year from character to integer
+df_fore$year <- as.integer(df_fore$year)
+
+### Join forecasts with original data
+df_list <- list(df_D_copy, df_fore)
+# Reduce(function(x, y) merge(x, y, all = TRUE), df_list) %>%
+#     arrange(year)
+
+df_D_copy <- df_list %>%
+    reduce(full_join, by = c("year", "count"))
+
+# Fill in missing values in joined data frame
+df_D_copy$name[is.na(df_D_copy$name)] <- df_D_copy$name[1]
+df_D_copy$gender[is.na(df_D_copy$gender)] <- df_D_copy$gender[1]
 
 ##### Forecast a few names
 
