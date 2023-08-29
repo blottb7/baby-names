@@ -93,6 +93,10 @@ df_D_copy <- df_list %>%
 df_D_copy$name[is.na(df_D_copy$name)] <- df_D_copy$name[1]
 df_D_copy$gender[is.na(df_D_copy$gender)] <- df_D_copy$gender[1]
 
+# Join forecasted data with all data
+tail(all_data %>%
+    full_join(df_D_copy), 15)
+
 ##### Forecast a few names
 
 # create a df with all years
