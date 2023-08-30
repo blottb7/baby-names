@@ -81,3 +81,6 @@ df_D_copy$name[is.na(df_D_copy$name)] <- df_D_copy$name[1]
 df_D_copy$gender[is.na(df_D_copy$gender)] <- df_D_copy$gender[1]
 df_D_copy$count[is.na(df_D_copy$count)] <- 0
 
+# Join forecasted data with all data
+all_data <- all_data %>%
+         full_join(df_D_copy)
