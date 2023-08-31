@@ -27,8 +27,8 @@ names(df_year) <- "year"
 ##### Forecast #####
 # get one name
 df_name <- all_data %>%
-    filter(name == "Susan") %>%
-    filter(gender == "F")
+    filter(gender == "M") %>%
+    filter(name == "Sarah")
 
 # reserve that data
 df_name_copy <- df_name
