@@ -26,23 +26,35 @@ names(df_year) <- "year"
 
 ##### Forecast #####
 # get one name
+baby_name <- "Sarah"
+baby_gender <- "M"
 df_name <- all_data %>%
-    filter(gender == "M") %>%
-    filter(name == "Sarah")
+    filter(gender == baby_gender) %>%
+    filter(name == baby_name)
 
-# reserve that data
-df_name_copy <- df_name
+### CLEAN
 
 # combine df's to get all years
 df_name <- df_year %>%
     left_join(df_name)
 
-# select just the count column
-df_name <- df_name |>
-    select(count)
+# Fill in missing values in joined data frame
+df_name$name[is.na(df_name$name)] <- baby_name
+df_name$gender[is.na(df_name$gender)] <- baby_gender
+df_name$count[is.na(df_name$count)] <- 0
+
+# reserve the cleaned data
+# df_name_copy <- df_name
+
+# select just the count column and convert to time series
+df_name_ts <- df_name |>
+    select(count) |>
+    ts(start=c(1880))
+# df_name <- df_name |>
+#     select(count)
 
 # convert to time_series
-df_name_ts <- ts(df_name,start=c(1880))
+# df_name_ts <- ts(df_name,start=c(1880))
 
 # Forecast HoltWinter model (no seasonal, but a trend)
 D_HW_forecasts <- HoltWinters(df_name_ts, beta = TRUE, gamma = FALSE)
@@ -69,19 +81,19 @@ df_fore <- rownames_to_column(df_fore, "year")
 # convert year from character to integer
 df_fore$year <- as.integer(df_fore$year)
 
-### Join forecasts with original data
+### Join forecasts with original, cleaned data
 # Create a list of two dataframes
-df_list <- list(df_name_copy, df_fore)
+df_list <- list(df_name, df_fore)
 
 # Join the dataframes into the original
-df_name_copy <- df_list %>%
+df_name <- df_list %>%
     reduce(full_join, by = c("year", "count"))
 
 # Fill in missing values in joined data frame
-df_name_copy$name[is.na(df_name_copy$name)] <- df_name_copy$name[1]
-df_name_copy$gender[is.na(df_name_copy$gender)] <- df_name_copy$gender[1]
-df_name_copy$count[is.na(df_name_copy$count)] <- 0
+df_name$name[is.na(df_name$name)] <- baby_name
+df_name$gender[is.na(df_name$gender)] <- baby_gender
+df_name$count[is.na(df_name$count)] <- 0
 
 # Join forecasted data with all data
 all_data <- all_data %>%
-         full_join(df_name_copy)
+         full_join(df_name)
