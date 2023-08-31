@@ -26,7 +26,7 @@ names(df_year) <- "year"
 
 ##### Forecast #####
 # get one name
-baby_name <- "Sarah"
+baby_name <- "Albert"
 baby_gender <- "M"
 df_name <- all_data %>%
     filter(gender == baby_gender) %>%
