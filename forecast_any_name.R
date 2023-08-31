@@ -26,26 +26,26 @@ names(df_year) <- "year"
 
 ##### Forecast #####
 # get one name
-df_D <- all_data %>%
+df_name <- all_data %>%
     filter(name == "Susan") %>%
     filter(gender == "F")
 
 # reserve that data
-df_D_copy <- df_D
+df_name_copy <- df_name
 
 # combine df's to get all years
-df_D <- df_year %>%
-    left_join(df_D)
+df_name <- df_year %>%
+    left_join(df_name)
 
 # select just the count column
-df_D <- df_D |>
+df_name <- df_name |>
     select(count)
 
 # convert to time_series
-df_D_ts <- ts(df_D,start=c(1880))
+df_name_ts <- ts(df_name,start=c(1880))
 
 # Forecast HoltWinter model (no seasonal, but a trend)
-D_HW_forecasts <- HoltWinters(df_D_ts, beta = TRUE, gamma = FALSE)
+D_HW_forecasts <- HoltWinters(df_name_ts, beta = TRUE, gamma = FALSE)
 
 # check values
 D_HW_forecasts$fitted
@@ -71,17 +71,17 @@ df_fore$year <- as.integer(df_fore$year)
 
 ### Join forecasts with original data
 # Create a list of two dataframes
-df_list <- list(df_D_copy, df_fore)
+df_list <- list(df_name_copy, df_fore)
 
 # Join the dataframes into the original
-df_D_copy <- df_list %>%
+df_name_copy <- df_list %>%
     reduce(full_join, by = c("year", "count"))
 
 # Fill in missing values in joined data frame
-df_D_copy$name[is.na(df_D_copy$name)] <- df_D_copy$name[1]
-df_D_copy$gender[is.na(df_D_copy$gender)] <- df_D_copy$gender[1]
-df_D_copy$count[is.na(df_D_copy$count)] <- 0
+df_name_copy$name[is.na(df_name_copy$name)] <- df_name_copy$name[1]
+df_name_copy$gender[is.na(df_name_copy$gender)] <- df_name_copy$gender[1]
+df_name_copy$count[is.na(df_name_copy$count)] <- 0
 
 # Join forecasted data with all data
 all_data <- all_data %>%
-         full_join(df_D_copy)
+         full_join(df_name_copy)
