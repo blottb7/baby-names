@@ -30,14 +30,35 @@ baby_names <- c("Albert", "Delilah", "Samantha")
 baby_genders <- c("M", "F")
 
 # function for every baby name and gender
-for (name in baby_names) {
-    for (gender in baby_gender) {
+for (n in baby_names) {
+    for (g in baby_genders) {
+        
         
         df_name <- all_data %>%
-            filter(gender == gender) %>%
-            filter(name == name)
+            filter(g == gender) %>%
+            filter(n == name)
         
-        print(name, gender)
+        ### CLEAN
+        
+        # continue if name, gender combo exists in database
+        if (nrow(df_name) > 0) {
+            
+            # combine df's to get all years
+            df_name <- df_year %>%
+                left_join(df_name)
+            
+            # Fill in missing values in joined data frame
+            df_name$name[is.na(df_name$name)] <- n
+            df_name$gender[is.na(df_name$gender)] <- g
+            df_name$count[is.na(df_name$count)] <- 0
+            
+            # print head or tail of df
+            print(tail(df_name))
+            
+            # print name and gender for testing
+            print(c(n, g))
+            
+        }
         
     }
 }
