@@ -53,11 +53,66 @@ for (n in baby_names) {
             df_name$count[is.na(df_name$count)] <- 0
             
             # print head or tail of df
-            print(tail(df_name))
+            # print(tail(df_name))
             
             # print name and gender for testing
-            print(c(n, g))
+            # print(c(n, g))
             
+            # select just the count column and convert to time series
+            df_name_ts <- df_name |>
+                select(count) |>
+                ts(start=c(1880))
+            
+            # print time series
+            # print(tail(df_name_ts))
+            
+            # Forecast HoltWinter model (no seasonal, but a trend)
+            D_HW_forecasts <- HoltWinters(df_name_ts, beta = TRUE, gamma = FALSE)
+            
+            # check values
+            D_HW_forecasts$fitted
+            
+            # plot ts vs forecasts
+            # plot(D_HW_forecasts)
+            
+            # Append n years of forecasts for the new name onto the main df
+            # Save forecasts in an object
+            future_forecasts <- forecast:::forecast.HoltWinters(D_HW_forecasts, h=10)
+            
+            # save mean forecasts in an object
+            future_forecasts_mean <- round(future_forecasts$mean, 0)
+            
+            # convert from ts to dataframe with row names as years
+            df_fore <- as.data.frame(matrix(future_forecasts_mean, dimnames = list(seq(2023, 2032, 1), "count")))
+            
+            # convert row names to year column
+            df_fore <- rownames_to_column(df_fore, "year")
+            
+            # convert year from character to integer
+            df_fore$year <- as.integer(df_fore$year)
+            
+            # print df_fore
+            # print(df_fore)
+            
+            ### Join forecasts with original, cleaned data
+            # Create a list of two dataframes
+            df_list <- list(df_name, df_fore)
+            
+            # Join the dataframes into the original
+            df_name <- df_list %>%
+                reduce(full_join, by = c("year", "count"))
+            
+            # Fill in missing values in joined data frame
+            df_name$name[is.na(df_name$name)] <- n
+            df_name$gender[is.na(df_name$gender)] <- g
+            df_name$count[is.na(df_name$count)] <- 0
+            
+            # Join forecasted data with all data
+            all_data <- all_data %>%
+                full_join(df_name)
+            
+            # print tail all_data
+            print(tail(all_data, 10))
         }
         
     }
