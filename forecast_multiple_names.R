@@ -17,17 +17,19 @@ all_data <- map_dfr(dir('./data'), function(x){
         mutate(year = x %>% str_extract('\\d+') %>% as.integer)
 })
 
-# Instantiate an empty dataframe
-# create a df with all years
-df_year <- as.data.frame(matrix(seq(1880, 2022, 1)))
-
-# name the column
-names(df_year) <- "year"
-
 ##### Forecast #####
 
 # function for every baby name and gender
 forecast_baby_names <- function(df, baby_names, baby_genders) {
+    
+    # Instantiate an empty dataframe
+    # create a df with all years
+    df_year <- as.data.frame(matrix(seq(1880, 2022, 1)))
+    
+    # name the column
+    names(df_year) <- "year"
+    
+    # forecast all baby name and gender combinations
     for (n in baby_names) {
         for (g in baby_genders) {
             
@@ -110,7 +112,7 @@ forecast_baby_names <- function(df, baby_names, baby_genders) {
                     full_join(df_name)
                 
                 # print tail all_data
-                print(tail(df, 10))
+                # print(tail(df, 10))
             }
             
         }
@@ -121,4 +123,7 @@ forecast_baby_names <- function(df, baby_names, baby_genders) {
 baby_names <- c("Albert", "Delilah", "Samantha")
 baby_genders <- c("M", "F")
 
-forecast_baby_names(all_data, baby_names, baby_genders)
+baby_names <- head(unique(all_data$name), 100)
+
+df_new <- forecast_baby_names(all_data, baby_names, baby_genders)
+# df_new_tail <- tail(df_new, 171)
