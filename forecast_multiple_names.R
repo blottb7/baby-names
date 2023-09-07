@@ -25,12 +25,9 @@ df_year <- as.data.frame(matrix(seq(1880, 2022, 1)))
 names(df_year) <- "year"
 
 ##### Forecast #####
-# get one name
-baby_names <- c("Albert", "Delilah", "Samantha")
-baby_genders <- c("M", "F")
 
 # function for every baby name and gender
-forecast_baby_names <- function(df) {
+forecast_baby_names <- function(df, baby_names, baby_genders) {
     for (n in baby_names) {
         for (g in baby_genders) {
             
@@ -121,4 +118,7 @@ forecast_baby_names <- function(df) {
     return(df)
 }
 
-forecast_baby_names(all_data)
+baby_names <- c("Albert", "Delilah", "Samantha")
+baby_genders <- c("M", "F")
+
+forecast_baby_names(all_data, baby_names, baby_genders)
