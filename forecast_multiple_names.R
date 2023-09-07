@@ -29,11 +29,18 @@ forecast_baby_names <- function(df, baby_names, baby_genders) {
     # name the column
     names(df_year) <- "year"
     
+    # Instatiate a dataframe for forecasts
+    df_forecasts <- data.frame(matrix(ncol = 4))
+    
+    # name the columns
+    colnames(df_forecasts) <- c("year", "name", "gender", "count")
+    
+    
     # forecast all baby name and gender combinations
     for (n in baby_names) {
         for (g in baby_genders) {
             
-            
+            # Isolate one df, name combo
             df_name <- df %>%
                 filter(g == gender) %>%
                 filter(n == name)
@@ -107,23 +114,26 @@ forecast_baby_names <- function(df, baby_names, baby_genders) {
                 df_name$gender[is.na(df_name$gender)] <- g
                 df_name$count[is.na(df_name$count)] <- 0
                 
-                # Join forecasted data with all data
-                df <- df %>%
+                # Join all newly generated data with all forecasted data
+                # df <- df %>%
+                #     full_join(df_name)
+                df_forecasts <- df_forecasts %>%
                     full_join(df_name)
+                # print(df_name)
                 
                 # print tail all_data
-                # print(tail(df, 10))
+                print(tail(df_forecasts, 10))
             }
             
         }
     }
-    return(df)
+    return(df_forecasts)
 }
 
 baby_names <- c("Albert", "Delilah", "Samantha")
 baby_genders <- c("M", "F")
 
-baby_names <- head(unique(all_data$name), 100)
+# baby_names <- head(unique(all_data$name), 3)
 
 df_new <- forecast_baby_names(all_data, baby_names, baby_genders)
 # df_new_tail <- tail(df_new, 171)
