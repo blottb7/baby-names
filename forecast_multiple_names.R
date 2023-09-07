@@ -52,7 +52,7 @@ forecast_baby_names <- function(df, baby_names, baby_genders) {
                 
                 # combine df's to get all years
                 df_name <- df_year %>%
-                    left_join(df_name)
+                    left_join(df_name, by = join_by(year))
                 
                 # Fill in missing values in joined data frame
                 df_name$name[is.na(df_name$name)] <- n
@@ -98,42 +98,61 @@ forecast_baby_names <- function(df, baby_names, baby_genders) {
                 # convert year from character to integer
                 df_fore$year <- as.integer(df_fore$year)
                 
-                # print df_fore
-                # print(df_fore)
+                # Add baby name and gender back into forecasted df
+                df_fore <- df_fore %>%
+                    mutate(name = n, gender = g)
                 
-                ### Join forecasts with original, cleaned data
-                # Create a list of two dataframes
-                df_list <- list(df_name, df_fore)
+                # Join new forecasts with previous forecasts
+                # df_forecasts <- df_forecasts %>%
+                #     full_join(df_fore, by = join_by(year, name, gender, count))
+                df_forecasts <- merge(df_forecasts, df_fore,
+                                      by = c("year", "name", "gender", "count"),
+                                      all = TRUE)
+                # print(df_forecasts)
                 
-                # Join the dataframes into the original
-                df_name <- df_list %>%
-                    reduce(full_join, by = c("year", "count"))
-                
-                # Fill in missing values in joined data frame
-                df_name$name[is.na(df_name$name)] <- n
-                df_name$gender[is.na(df_name$gender)] <- g
-                df_name$count[is.na(df_name$count)] <- 0
-                
-                # Join all newly generated data with all forecasted data
-                # df <- df %>%
+                # ### Join forecasts with original, cleaned data
+                # # Create a list of two dataframes
+                # df_list <- list(df_name, df_fore)
+                # 
+                # # Join the dataframes into the original
+                # df_name <- df_list %>%
+                #     reduce(full_join, by = c("year", "count"))
+                # 
+                # # Fill in missing values in joined data frame
+                # df_name$name[is.na(df_name$name)] <- n
+                # df_name$gender[is.na(df_name$gender)] <- g
+                # df_name$count[is.na(df_name$count)] <- 0
+                # 
+                # # Join all newly generated data with all forecasted data
+                # # df <- df %>%
+                # #     full_join(df_name)
+                # df_forecasts <- df_forecasts %>%
                 #     full_join(df_name)
-                df_forecasts <- df_forecasts %>%
-                    full_join(df_name)
-                # print(df_name)
-                
-                # print tail all_data
-                print(tail(df_forecasts, 10))
+                # # print(df_name)
+                # 
+                # # print tail all_data
+                # print(tail(df_forecasts, 10))
             }
             
         }
     }
+    # remove na row
+    df_forecasts <- df_forecasts[complete.cases(df_forecasts),]
+    
+    # return forecastgs
     return(df_forecasts)
 }
 
 baby_names <- c("Albert", "Delilah", "Samantha")
 baby_genders <- c("M", "F")
 
-# baby_names <- head(unique(all_data$name), 3)
+baby_names <- head(unique(all_data$name), 100)
 
 df_new <- forecast_baby_names(all_data, baby_names, baby_genders)
+
+df_new <- df_new %>%
+    arrange(year, gender, desc(count), name)
 # df_new_tail <- tail(df_new, 171)
+
+# all_data <- all_data %>%
+#     full_join(df_new)
