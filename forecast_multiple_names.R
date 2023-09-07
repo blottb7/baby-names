@@ -35,7 +35,7 @@ forecast_baby_names <- function(df) {
         for (g in baby_genders) {
             
             
-            df_name <- all_data %>%
+            df_name <- df %>%
                 filter(g == gender) %>%
                 filter(n == name)
             
