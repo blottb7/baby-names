@@ -109,11 +109,11 @@ forecast_baby_names <- function(df) {
                 df_name$count[is.na(df_name$count)] <- 0
                 
                 # Join forecasted data with all data
-                all_data <- all_data %>%
+                df <- df %>%
                     full_join(df_name)
                 
                 # print tail all_data
-                print(tail(all_data, 10))
+                print(tail(df, 10))
             }
             
         }
